@@ -17,20 +17,29 @@
       --yesHover: #ff1f68;
     }
 
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: auto;
+      min-height: 100%;
+      -webkit-overflow-scrolling: touch;
+    }
 
     body {
       margin: 0;
-      min-height: 100svh;
       display: grid;
       place-items: center;
       background: radial-gradient(circle at top, var(--bg2), var(--bg1));
       font-family: system-ui, sans-serif;
-      overflow: hidden;
       padding: 16px;
+
+      overflow-x: hidden;
+      overflow-y: auto;
     }
 
-    /* FULL-SCREEN CONFETTI CANVAS */
+    /* CONFETTI CANVAS */
     #confettiCanvas {
       position: fixed;
       inset: 0;
@@ -51,15 +60,22 @@
     }
 
     .art {
-      width: min(260px, 80vw);
-      margin: 0 auto 10px;
+      width: 100%;
+      max-width: 260px;
+      height: auto;
+      margin: 0 auto 12px;
       display: block;
       filter: drop-shadow(0 10px 14px rgba(0,0,0,.12));
     }
 
     h1 {
       font-size: clamp(26px, 4vw, 44px);
-      margin: 12px 0 18px;
+      margin: 12px 0 6px;
+    }
+
+    h2 {
+      margin: 0 0 18px;
+      font-weight: 500;
     }
 
     .button-zone {
@@ -91,7 +107,10 @@
       background: var(--yes);
       color: #fff;
     }
-    #yesBtn:hover { background: var(--yesHover); }
+
+    #yesBtn:hover {
+      background: var(--yesHover);
+    }
 
     #noBtn {
       left: 62%;
@@ -123,8 +142,14 @@
     }
 
     @keyframes pop {
-      from { transform: scale(.96); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
+      from {
+        transform: scale(.96);
+        opacity: 0;
+      }
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
     }
   </style>
 </head>
@@ -133,33 +158,33 @@
   <canvas id="confettiCanvas"></canvas>
 
   <main class="card">
-  <img
-  class="art"
-  src="https://i.imgur.com/PASTE_REAL_ID_HERE.jpg"
-  alt="Shaniya prada cup photo"
-  loading="eager"
-  decoding="async"
-/>
-
-  <h1>Shaniya will you be my valentine?</h1>
-  <h2>the decision is yours :)</h2>
-
-  <section class="button-zone" id="zone">
-    <button id="yesBtn">Yes</button>
-    <button id="noBtn">No</button>
-  </section>
-
-  <div class="hint" id="hint">“No” seems a bit shy 😈</div>
-
-  <section class="result" id="result">
-    <h2>YAY! 🎉</h2>
     <img
-      class="fireworks"
-      src="https://media.giphy.com/media/26ufdipQqU2lhNA4g/giphy.gif"
-      alt="Fireworks"
+      class="art"
+      src="https://i.imgur.com/REPLACE_THIS.jpg"
+      alt="Shaniya prada cup photo"
+      loading="eager"
+      decoding="async"
     />
-  </section>
-</main>
+
+    <h1>Shaniya will you be my valentine?</h1>
+    <h2>the decision is yours :)</h2>
+
+    <section class="button-zone" id="zone">
+      <button id="yesBtn">Yes</button>
+      <button id="noBtn">No</button>
+    </section>
+
+    <div class="hint" id="hint">“No” seems a bit shy 😈</div>
+
+    <section class="result" id="result">
+      <h2>YAY! 🎉</h2>
+      <img
+        class="fireworks"
+        src="https://media.giphy.com/media/26ufdipQqU2lhNA4g/giphy.gif"
+        alt="Fireworks"
+      />
+    </section>
+  </main>
 
   <script>
     const zone = document.getElementById("zone");
@@ -168,7 +193,6 @@
     const result = document.getElementById("result");
     const hint = document.getElementById("hint");
 
-    /* ---------- CONFETTI ---------- */
     const confettiCanvas = document.getElementById("confettiCanvas");
 
     function resizeConfettiCanvas() {
@@ -181,7 +205,9 @@
 
     resizeConfettiCanvas();
     window.addEventListener("resize", resizeConfettiCanvas);
-    window.addEventListener("orientationchange", () => setTimeout(resizeConfettiCanvas, 150));
+    window.addEventListener("orientationchange", () =>
+      setTimeout(resizeConfettiCanvas, 150)
+    );
 
     const confettiInstance = confetti.create(confettiCanvas, {
       resize: false,
@@ -213,14 +239,12 @@
       }, 300);
     }
 
-    /* ---------- YES BUTTON GROWS ---------- */
     let yesScale = 1;
     function growYes() {
       yesScale = Math.min(2.2, yesScale + 0.1);
       yesBtn.style.transform = `translateY(-50%) scale(${yesScale})`;
     }
 
-    /* ---------- NO BUTTON RUNS AWAY ---------- */
     function clamp(n, min, max) {
       return Math.max(min, Math.min(max, n));
     }
@@ -236,10 +260,10 @@
       dy /= mag;
 
       let newLeft = (b.left - z.left) + dx * 150;
-      let newTop  = (b.top - z.top) + dy * 150;
+      let newTop = (b.top - z.top) + dy * 150;
 
       newLeft = clamp(newLeft, 0, z.width - b.width);
-      newTop  = clamp(newTop, 0, z.height - b.height);
+      newTop = clamp(newTop, 0, z.height - b.height);
 
       noBtn.style.left = newLeft + "px";
       noBtn.style.top = newTop + "px";
@@ -259,10 +283,9 @@
 
     noBtn.addEventListener("click", e => e.preventDefault());
 
-    /* ---------- YES CLICK ---------- */
     yesBtn.addEventListener("click", () => {
       zone.style.display = "none";
-      hint.style.display = "none";     // HIDE THE HINT
+      hint.style.display = "none";
       result.style.display = "block";
       resizeConfettiCanvas();
       fullScreenConfetti();
